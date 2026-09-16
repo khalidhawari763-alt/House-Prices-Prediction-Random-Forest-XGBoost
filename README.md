@@ -88,7 +88,6 @@ house_prices_project/
 ├── correlation_heatmap.png
 │
 ├── README.md
-└── requirements.txt
 ```
 
 ## ⚙️ Data Preprocessing
