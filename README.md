@@ -235,6 +235,20 @@ To submit the predictions:
 
 The submitted model achieved a **0.13 Kaggle score**.
 
+## 📊 Exploratory Data Analysis
+
+### Sale Price Distribution
+
+![Sale Price Distribution](images/distribution_saleprice.png)
+
+### Top Features Correlation
+
+![Top Features Correlation](images/top_features_correlation.png)
+
+### Correlation Heatmap
+
+![Correlation Heatmap](images/correlation_heatmap.png)
+
 ## 🎯 What I Learned
 
 Through this project, I practiced:
