@@ -1,316 +1,424 @@
-# 🏠 House Prices Prediction — Random Forest & XGBoost Ensemble
+# 🏠 House Prices Prediction
 
-A machine learning project for predicting residential house prices using an ensemble of **Random Forest** and **XGBoost** regression models.
+A machine learning project for predicting residential house prices using the **Ames Housing dataset**. The project covers data preprocessing, feature engineering, exploratory data analysis, categorical encoding, missing-value handling, and machine learning model training.
 
-The project uses the **Kaggle House Prices: Advanced Regression Techniques** dataset and focuses on data preprocessing, feature analysis, regression modeling, ensemble learning, and Kaggle submission.
+---
 
 ## 📌 Project Overview
 
-The objective is to predict the **SalePrice** of houses based on their property characteristics.
+The goal of this project is to build a machine learning pipeline that can predict the **SalePrice** of houses based on their characteristics.
 
-The project compares two tree-based regression approaches:
+The dataset contains information about different aspects of a house, including:
 
-* 🌲 **Random Forest Regression**
-* 🚀 **XGBoost Regression**
-* 🤝 **Ensemble Model** combining predictions from both models
+* Overall quality
+* Living area
+* Basement area
+* Garage information
+* Number of rooms
+* Bathrooms
+* Year built
+* Neighborhood
+* Exterior materials
+* And many other features
 
-The final predictions are generated in Kaggle's required submission format.
+The project focuses on preparing the data correctly and creating useful features before training the prediction model.
 
-## 📊 Dataset
-
-**Source:** Kaggle — House Prices: Advanced Regression Techniques
-
-* **Training samples:** 1,460 houses
-* **Test samples:** 1,459 houses
-* **Original features:** 79
-* **Target variable:** `SalePrice`
-* **Features used:** 37 numerical features
-
-### Important Features
-
-Some of the features used include:
-
-| Feature       | Description                         |
-| ------------- | ----------------------------------- |
-| `OverallQual` | Overall material and finish quality |
-| `GrLivArea`   | Above-ground living area            |
-| `TotalBsmtSF` | Total basement area                 |
-| `GarageCars`  | Garage capacity                     |
-| `YearBuilt`   | Original construction year          |
-| `FullBath`    | Number of full bathrooms            |
-
-## 🧠 Machine Learning Workflow
-
-The project follows a complete machine learning pipeline:
-
-```text
-Dataset
-   ↓
-Data Loading
-   ↓
-Data Cleaning
-   ↓
-Feature Selection
-   ↓
-Missing Value Handling
-   ↓
-Model Training
-   ↓
-Random Forest + XGBoost
-   ↓
-Ensemble Prediction
-   ↓
-Kaggle Submission
-```
-
-## 🛠️ Technologies
-
-* **Python**
-* **Pandas** — data manipulation
-* **NumPy** — numerical computing
-* **Scikit-learn** — machine learning
-* **XGBoost** — gradient boosting
-* **Matplotlib** — visualization
-* **Seaborn** — statistical visualization
+---
 
 ## 📂 Project Structure
 
 ```text
-house_prices_project/
+House-Prices-Prediction/
 │
+├── images/
+│   ├── distribution_saleprice.png
+│   ├── top_features_correlation.png
+│   └── correlation_heatmap.png
+│
+├── PreProcess.py
+├── random_forest_model.py
+├── XGboost_model.py
 ├── train.csv
 ├── test.csv
-├── house_prices_project.py
 ├── submission.csv
-│
-├── distribution_saleprice.png
-├── top_features_correlation.png
-├── correlation_heatmap.png
-│
-├── README.md
+└── README.md
 ```
 
-## ⚙️ Data Preprocessing
+---
 
-Missing values in the selected numerical features are handled before training:
+## 🛠️ Technologies Used
+
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Seaborn
+* Scikit-learn
+* XGBoost
+
+---
+
+## 🔄 Machine Learning Pipeline
+
+The project follows this general workflow:
+
+```text
+Raw Dataset
+     │
+     ▼
+Data Loading
+     │
+     ▼
+Feature Engineering
+     │
+     ▼
+Exploratory Data Analysis
+     │
+     ▼
+Train / Validation Split
+     │
+     ▼
+Missing Value Handling
+     │
+     ▼
+Categorical Encoding
+     │
+     ▼
+Feature Processing
+     │
+     ▼
+Model Training
+     │
+     ▼
+Validation
+     │
+     ▼
+Prediction
+```
+
+---
+
+## 🧹 Data Preprocessing
+
+The preprocessing pipeline handles both numerical and categorical features.
+
+### Numerical Features
+
+Missing numerical values are handled using **median imputation**.
 
 ```python
-X_train = X_train.fillna(0)
+SimpleImputer(strategy="median")
 ```
 
-The project focuses on numerical features, resulting in **37 features** being used for model training.
+### Categorical Features
 
-## 🌲 Random Forest
+Missing categorical values are filled using the most frequent value.
 
-The Random Forest model uses multiple decision trees trained on different subsets of the data.
-
-### Parameters
-
-```text
-n_estimators = 100
-max_depth = 20
-```
-
-Random Forest helps reduce variance by averaging the predictions from many independent decision trees.
-
-## 🚀 XGBoost
-
-XGBoost is a gradient boosting algorithm that builds trees sequentially, with each new tree attempting to improve the previous model's predictions.
-
-### Parameters
-
-```text
-n_estimators = 100
-learning_rate = 0.1
-```
-
-XGBoost can capture complex non-linear relationships between house features and their prices.
-
-## 🤝 Ensemble Model
-
-The project combines the predictions from Random Forest and XGBoost by averaging them:
+Categorical variables are then converted into numerical representations using **One-Hot Encoding**.
 
 ```python
-ensemble_pred = (rf_pred + xgb_pred) / 2
+SimpleImputer(strategy="most_frequent")
+OneHotEncoder(handle_unknown="ignore")
 ```
 
-The idea behind the ensemble is that combining predictions from different models can produce a more robust prediction than relying on a single model.
+The preprocessing is implemented using a Scikit-learn `ColumnTransformer` and `Pipeline`.
 
-## 📈 Model Performance
+---
 
-### Kaggle Result
+## 🧠 Feature Engineering
 
-The model was submitted to the Kaggle House Prices competition and achieved a:
+Several additional features were created to provide the models with more meaningful information.
 
-**🏆 Kaggle Score: `0.13`**
+### TotalSF
 
-The Kaggle competition evaluates submissions using **Root Mean Squared Logarithmic Error (RMSLE)**.
+Combines:
 
-A lower RMSLE indicates better performance on the competition's evaluation set.
-
-> The Kaggle leaderboard score represents performance on Kaggle's hidden test data and should be distinguished from training-set metrics.
-
-## 🔎 Feature Analysis
-
-The project includes correlation analysis to investigate relationships between numerical features and `SalePrice`.
-
-The strongest correlations identified in the analysis include:
-
-1. `OverallQual`
-2. `GrLivArea`
-3. `TotalBsmtSF`
-
-These features provide useful information about the relationship between property characteristics and house prices.
-
-## 📊 Visualizations
-
-The project generates several visualizations:
-
-### SalePrice Distribution
-
-Shows the distribution of house sale prices and helps identify the right-skewed nature of the target variable.
-
-### Feature Correlation
-
-Shows the numerical features with the strongest correlation with `SalePrice`.
-
-### Correlation Heatmap
-
-Provides an overview of correlations between numerical features in the dataset.
-
-## ▶️ Installation
-
-Clone the repository:
-
-```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-cd house_prices_project
-```
-
-Install the required dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Or install them directly:
-
-```bash
-pip install pandas numpy scikit-learn xgboost matplotlib seaborn
-```
-
-## 🚀 Usage
-
-Make sure the following files are in the project directory:
+* Basement area
+* 1st floor area
+* 2nd floor area
 
 ```text
-train.csv
-test.csv
-house_prices_project.py
+TotalSF =
+TotalBsmtSF + 1stFlrSF + 2ndFlrSF
 ```
 
-Run the main script:
+### TotalBathrooms
 
-```bash
-python house_prices_project.py
-```
-
-The script generates:
+Combines full and half bathrooms, including basement bathrooms.
 
 ```text
-submission.csv
-distribution_saleprice.png
-top_features_correlation.png
-correlation_heatmap.png
+TotalBathrooms =
+FullBath
++ 0.5 × HalfBath
++ BsmtFullBath
++ 0.5 × BsmtHalfBath
 ```
 
-## 📤 Kaggle Submission
+### TotalPorchSF
 
-To submit the predictions:
+Combines different porch and deck areas:
 
-1. Run `house_prices_project.py`.
-2. Locate the generated `submission.csv`.
-3. Upload the file to the Kaggle House Prices competition.
-4. Check the resulting leaderboard score.
+```text
+TotalPorchSF =
+OpenPorchSF
++ 3SsnPorch
++ EnclosedPorch
++ ScreenPorch
++ WoodDeckSF
+```
 
-The submitted model achieved a **0.13 Kaggle score**.
+### TotalHouseArea
+
+Combines above-ground living area and basement area.
+
+```text
+TotalHouseArea =
+GrLivArea + TotalBsmtSF
+```
+
+### TotalRooms
+
+Combines rooms and bathrooms:
+
+```text
+TotalRooms =
+TotRmsAbvGrd + FullBath + HalfBath
+```
+
+---
 
 ## 📊 Exploratory Data Analysis
 
+The project includes several visualizations to understand the dataset and relationships between features.
+
 ### Sale Price Distribution
+
+This plot shows the distribution of the target variable, `SalePrice`.
 
 ![Sale Price Distribution](images/distribution_saleprice.png)
 
+---
+
 ### Top Features Correlation
+
+This visualization shows the numerical features with the strongest absolute correlation with `SalePrice`.
 
 ![Top Features Correlation](images/top_features_correlation.png)
 
+---
+
 ### Correlation Heatmap
+
+The heatmap provides a visual overview of the relationships between the most relevant numerical features and the target.
 
 ![Correlation Heatmap](images/correlation_heatmap.png)
 
-## 🎯 What I Learned
+---
 
-Through this project, I practiced:
+## 🔢 Dataset Processing
 
-* Data cleaning and preprocessing
-* Exploratory data analysis
-* Feature selection
+The original dataset contains numerical and categorical variables.
+
+The preprocessing pipeline separates them automatically:
+
+```python
+numerical_cols = X.select_dtypes(
+    include=[np.number]
+).columns.tolist()
+
+categorical_cols = X.select_dtypes(
+    include=["object"]
+).columns.tolist()
+```
+
+The data is then transformed before being passed to the machine learning model.
+
+Example processed dimensions:
+
+```text
+Original training data:
+1168 samples × 84 features
+
+Processed training data:
+1168 samples × 290 features
+```
+
+One-hot encoding increases the number of features because categorical variables can contain multiple categories.
+
+---
+
+## 🤖 Machine Learning Models
+
+The project includes machine learning models for house-price prediction.
+
+### Random Forest
+
+Random Forest is an ensemble learning algorithm based on multiple decision trees.
+
+It can capture nonlinear relationships between house characteristics and prices.
+
+The model is implemented in:
+
+```text
+random_forest_model.py
+```
+
+---
+
+### XGBoost
+
+XGBoost is a gradient boosting algorithm that builds decision trees sequentially to improve prediction performance.
+
+The model is implemented in:
+
+```text
+XGboost_model.py
+```
+
+---
+
+## 📈 Model Evaluation
+
+The data is divided into training and validation sets using an 80/20 split:
+
+```python
+train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+```
+
+The validation set is used to evaluate how well the trained model performs on previously unseen data.
+
+---
+
+## 🧪 Reproducibility
+
+A fixed random state is used for the train/validation split:
+
+```python
+random_state=42
+```
+
+This allows the same split to be reproduced when running the project again.
+
+---
+
+## 🚀 How to Run
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/khalidhawari763-alt/House-Prices-Prediction-Random-Forest-XGBoost.git
+```
+
+### 2. Enter the project directory
+
+```bash
+cd House-Prices-Prediction-Random-Forest-XGBoost
+```
+
+### 3. Install dependencies
+
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn xgboost
+```
+
+### 4. Run preprocessing
+
+```bash
+python PreProcess.py
+```
+
+This will:
+
+* Load the datasets
+* Perform feature engineering
+* Create EDA visualizations
+* Handle missing values
+* Encode categorical features
+* Prepare the processed data
+
+### 5. Train a model
+
+Run the appropriate model script:
+
+```bash
+python random_forest_model.py
+```
+
+or:
+
+```bash
+python XGboost_model.py
+```
+
+---
+
+## 📁 Generated Files
+
+The EDA section generates:
+
+```text
+images/
+├── distribution_saleprice.png
+├── top_features_correlation.png
+└── correlation_heatmap.png
+```
+
+These visualizations are also displayed in this README.
+
+---
+
+## 🎯 Project Goals
+
+This project was built to practice and demonstrate:
+
+* Data preprocessing
+* Exploratory Data Analysis
+* Feature engineering
+* Missing-value handling
+* Categorical encoding
+* Scikit-learn pipelines
 * Regression
-* Decision-tree-based algorithms
 * Random Forest
 * XGBoost
-* Ensemble learning
-* Model evaluation
-* Data visualization
-* Preparing Kaggle submissions
+* Model validation
+* Machine learning workflow design
+
+---
 
 ## 🔮 Future Improvements
 
-Possible improvements include:
+Possible future improvements include:
 
-1. **Feature Engineering**
+* Hyperparameter tuning
+* Feature selection
+* Outlier analysis
+* Log transformation of skewed features
+* Cross-validation
+* Additional regression models
+* Model comparison
+* Improved feature engineering
+* Error analysis
+* Visualization of model predictions
 
-   * Create additional meaningful features from existing variables.
-
-2. **Hyperparameter Optimization**
-
-   * Use techniques such as GridSearchCV or RandomizedSearchCV.
-
-3. **Cross-Validation**
-
-   * Use K-fold cross-validation for more reliable model evaluation.
-
-4. **Outlier Handling**
-
-   * Investigate extreme observations that may affect model performance.
-
-5. **Weighted Ensemble**
-
-   * Experiment with different weights for Random Forest and XGBoost.
-
-6. **Advanced Models**
-
-   * Experiment with LightGBM, CatBoost, or other regression approaches.
-
-7. **Deployment**
-
-   * Build an interactive web application where users can enter house features and receive a predicted price.
-
-## 📚 References
-
-* Kaggle — House Prices: Advanced Regression Techniques
-* Scikit-learn — Random Forest Regressor
-* XGBoost Documentation
-* Scikit-learn — Ensemble Methods
+---
 
 ## 👨‍💻 Author
 
 **Khalid Hawari**
 
-Robotics Science Student
-Jordan University of Science and Technology (JUST)
+Robotics Science / AI & Robotics student interested in:
+
+* Artificial Intelligence
+* Machine Learning
+* Deep Learning
+* Computer Vision
+* Robotics
+* Autonomous Systems
 
 ---
 
-⭐ This project was developed as part of my Machine Learning and Artificial Intelligence learning journey.
